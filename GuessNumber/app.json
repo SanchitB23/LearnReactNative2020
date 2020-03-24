@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Blank Template",
+    "name": "Guess a Number",
     "slug": "GuessNumber",
     "privacy": "public",
     "sdkVersion": "36.0.0",
