@@ -2,11 +2,12 @@ import React, {useState} from 'react';
 import * as Font from "expo-font";
 import {AppLoading} from "expo";
 import {enableScreens} from "react-native-screens";
-
-
+import {Provider} from "react-redux";
+import store from "./store";
 import MealsNavigator from "./routes/MealsNavigator";
 
 enableScreens();
+
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -21,6 +22,8 @@ export default function App() {
   if (!fontLoaded) {
     return <AppLoading startAsync={fetchFonts} onFinish={() => setFontLoaded(true)}/>
   }
-  return <MealsNavigator/>
+  return (
+      <Provider store={store}><MealsNavigator/></Provider>
+  )
 }
 
