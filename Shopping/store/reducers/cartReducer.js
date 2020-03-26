@@ -1,4 +1,4 @@
-import {ADD_ORDER, ADD_TO_CART, REMOVE_FROM_CART} from "../../constants/actionTypes";
+import {ADD_ORDER, ADD_TO_CART, DELETE_PRODUCT, REMOVE_FROM_CART} from "../../constants/actionTypes";
 import CartItem from "../../models/cart-item";
 
 const initialState = {
@@ -52,6 +52,17 @@ export default (state = initialState, action) => {
       };
     case ADD_ORDER:
       return initialState;
+    case DELETE_PRODUCT:
+      if (!state.items.hasOwnProperty(action.productId))
+        return state;
+      const updatedItems = {...state.items};
+      const itemsTotal = state.items[action.productId].sum;
+      delete updatedItems[action.productId];
+      return {
+        ...state,
+        items: updatedItems,
+        totalAmount: state.totalAmount - itemsTotal
+      };
     default :
       return state
   }

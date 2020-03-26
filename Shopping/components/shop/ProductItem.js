@@ -1,12 +1,13 @@
 import React from 'react';
-import {Button, Image, Platform, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View} from 'react-native';
-import colors from "../../constants/colors";
+import {Image, Platform, StyleSheet, Text, TouchableNativeFeedback, TouchableOpacity, View} from 'react-native';
 
-const ProductItem = ({data, onViewDetails, onAddToCart}) => {
+const ProductItem = (props) => {
+  const {data, onSelect} = props;
+  console.log('prodItem', data.price);
   const TouchableComponent = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
   return (
       <View style={styles.container}>
-        <TouchableComponent onPress={onViewDetails} useForeground>
+        <TouchableComponent onPress={onSelect} useForeground>
           <View>
             <View style={styles.imageContainer}>
               <Image source={{uri: data.imageUrl}} style={styles.image}/>
@@ -16,8 +17,7 @@ const ProductItem = ({data, onViewDetails, onAddToCart}) => {
               <Text style={styles.price}>${data.price.toFixed(2)}</Text>
             </View>
             <View style={styles.actionsContainer}>
-              <Button color={colors.primary} title="View Details" onPress={onViewDetails}/>
-              <Button color={colors.primary} title="Add to Cart" onPress={onAddToCart}/>
+              {props.children}
             </View>
           </View>
         </TouchableComponent>
