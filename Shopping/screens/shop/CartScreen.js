@@ -3,7 +3,7 @@ import {Button, FlatList, StyleSheet, Text, View} from 'react-native';
 import {useDispatch, useSelector} from "react-redux";
 import colors from "../../constants/colors";
 import CartItem from "../../components/shop/CartItem";
-import {removeFromCart} from "../../store/actions";
+import {addOrder, removeFromCart} from "../../store/actions";
 
 const CartScreen = () => {
   const cartTotalAmount = useSelector(state => state.cart.totalAmount);
@@ -27,12 +27,12 @@ const CartScreen = () => {
           <Text style={styles.summaryText}>
             Total: <Text style={styles.amount}>${cartTotalAmount.toFixed(2)}</Text>
           </Text>
-          <Button title="Order Now" onPress={() => {
-          }} color={colors.accent} disabled={cartItems.length === 0}/>
+          <Button title="Order Now" onPress={() => dispatch(addOrder(cartItems, cartTotalAmount))} color={colors.accent}
+                  disabled={cartItems.length === 0}/>
         </View>
         <FlatList data={cartItems} renderItem={item =>
             <CartItem data={item.item}
-                      onRemove={() => dispatch(removeFromCart(item.item.productId))}/>}
+                      onRemove={() => dispatch(removeFromCart(item.item.productId))}/>} deletable
                   keyExtractor={item => item.productId}/>
       </View>
   );

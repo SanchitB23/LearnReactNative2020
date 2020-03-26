@@ -1,12 +1,12 @@
 import React from 'react';
 import {Provider} from "react-redux";
 import store from "./store";
-import ShopNavigator from "./routes/ShopNavigator";
+import MainNavigator from "./routes";
 
 export default function App() {
   return (
       <Provider store={store}>
-        <ShopNavigator/>
+        <MainNavigator/>
       </Provider>
   );
 }
