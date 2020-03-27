@@ -8,13 +8,13 @@ const OrderItem = ({data}) => {
   return (
       <View style={styles.container}>
         <View style={styles.summary}>
-          <Text style={styles.text}>${data.totalAmount.toFixed(2)}</Text>
+          <Text style={styles.text}>Total: ${data.totalAmount.toFixed(2)}</Text>
           <Text style={styles.text}>{data.date}</Text>
         </View>
         <Button title={`${!showDetails ? 'Show' : 'Hide'} Details`}
                 onPress={() => setShowDetails(prevState => !prevState)} color={colors.primary}/>
         {showDetails && <View style={styles.detailItems}>
-          {data.items.map(cartItem => <CartItem key={cartItem.productId} data={cartItem} deletable/>)}
+          {data.items.map(cartItem => <CartItem key={cartItem.productId} data={cartItem} deletable={false}/>)}
         </View>}
       </View>
   );

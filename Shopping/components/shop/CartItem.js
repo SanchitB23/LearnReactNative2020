@@ -8,11 +8,11 @@ const CartItem = (props) => {
   return (
       <View style={styles.container}>
         <View style={styles.itemData}>
-          <Text style={styles.text}>{data.quantity} </Text>
+          <Text style={styles.text}>{data.quantity}pc </Text>
           <Text style={styles.text}>{data.productTitle}</Text>
         </View>
         <View style={styles.itemData}>
-          <Text style={styles.text}>{data.sum} </Text>
+          <Text style={styles.text}>${data.sum} </Text>
           {deletable && <TouchableComponent onPress={props.onRemove} style={styles.deleteButton}>
             <Ionicons name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'} size={23} color={'red'}/>
           </TouchableComponent>}

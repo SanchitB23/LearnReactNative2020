@@ -1,55 +1,116 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import React, {useCallback, useEffect, useReducer} from 'react';
+import {Alert, KeyboardAvoidingView, ScrollView, StyleSheet, View} from 'react-native';
 import {TextInput} from "react-native-paper";
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 import CustomHeaderButton from "../../components/layouts/CustomHeaderButton";
 import {useDispatch, useSelector} from "react-redux";
 import {createProduct, updateProduct} from "../../store/actions";
 
+
+function formReducer(state, action) {
+  switch (action.type) {
+    case 'UPDATE':
+      const updatedValues = {
+        ...state.inputValues,
+        [action.inputIdentifier]: action.value
+      };
+      const updatedInputValidities = {
+        ...state.inputValidities,
+        [action.inputIdentifier]: action.isValid
+      };
+      let formIsValid = true;
+      for (const key in updatedInputValidities) {
+        if (updatedInputValidities.hasOwnProperty(key))
+          formIsValid = formIsValid && updatedInputValidities[key]
+      }
+      return {
+        ...state,
+        inputValues: updatedValues,
+        inputValidities: updatedInputValidities,
+        formIsValid
+      };
+    default:
+      return state
+  }
+}
+
 const EditProductsScreen = (props) => {
   const prodId = props.navigation.getParam('productId');
 
   const editedProduct = useSelector(state => state.products.userProducts.find(prod => prod.id === prodId));
   const dispatch = useDispatch();
-  const [title, setTitle] = useState(editedProduct ? editedProduct.title : '');
-  const [imageUrl, setImageUrl] = useState(editedProduct ? editedProduct.imageUrl : '');
-  const [price, setPrice] = useState(editedProduct ? editedProduct.price : '');
-  const [description, setDescription] = useState(editedProduct ? editedProduct.description : '');
 
+  const [formState, dispatchFormState] = useReducer(formReducer, {
+    inputValues: {
+      title: editedProduct ? editedProduct.title : '',
+      imageUrl: editedProduct ? editedProduct.imageUrl : '',
+      price: editedProduct ? editedProduct.price : '',
+      description: editedProduct ? editedProduct.description : '',
+    },
+    inputValidities: {
+      title: !!editedProduct,
+      imageUrl: !!editedProduct,
+      price: !!editedProduct,
+      description: !!editedProduct,
+    },
+    formIsValid: !!editedProduct
+  });
+  console.log(formState);
   const submitHandler = useCallback(() => {
+    if (!formState.formIsValid) {
+      Alert.alert('Wrong Input');
+      return
+    }
+    const {title, description, price, imageUrl} = formState.inputValues;
     if (editedProduct) {
       dispatch(updateProduct(prodId, title, imageUrl, description))
     } else
       dispatch(createProduct(title, imageUrl, +price, description));
     props.navigation.goBack()
-  }, [dispatch, prodId, title, price, imageUrl, description]);
+  }, [dispatch, prodId, formState]);
 
   useEffect(() => {
     props.navigation.setParams({submit: submitHandler})
   }, [submitHandler]);
 
+  const textChangeHandler = (inputIdentifier, text) => {
+    let isValid = false;
+    if (text.trim().length > 0)
+      isValid = true;
+    dispatchFormState({type: 'UPDATE', value: text, isValid, input: 'title', inputIdentifier})
+  };
+
   return (
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.inputContainer}>
-            <TextInput mode="outlined" style={styles.input} label="Title" value={title}
-                       onChangeText={(text) => setTitle(text)}/>
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100} style={{flex: 1}}>
+        <ScrollView>
+          <View style={styles.container}>
+            <View style={styles.inputContainer}>
+              <TextInput mode="outlined" style={styles.input} label="Title" value={formState.inputValues.title}
+                         onChangeText={textChangeHandler.bind(this, 'title')} autoCapitalize='sentences'
+                         autoCorrent={true}
+                         returnKeyType={'next'}/>
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput mode="outlined" style={styles.input} label="Image URL" value={formState.inputValues.imageUrl}
+                         onChangeText={textChangeHandler.bind(this, 'imageUrl')} returnKeyType={'next'}/>
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput mode="outlined" style={styles.input} label="Price"
+                         value={formState.inputValues.price.toString()}
+                         editable={!editedProduct}
+                         onChangeText={textChangeHandler.bind(this, 'price')} keyboardType="numeric"
+                         returnKeyType={'next'}/>
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput mode="outlined" style={styles.input} label="Description"
+                         value={formState.inputValues.description}
+                         returnKeyType={'next'} onChangeText={textChangeHandler.bind(this, 'description')}
+                         autoCapitalize='sentences'
+                         autoCorrent={true}/>
+            </View>
           </View>
-          <View style={styles.inputContainer}>
-            <TextInput mode="outlined" style={styles.input} label="Image URL" value={imageUrl}
-                       onChangeText={(text) => setImageUrl(text)}/>
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput mode="outlined" style={styles.input} label="Price" value={price.toString()}
-                       editable={!editedProduct}
-                       onChangeText={(text) => setPrice(text)} keyboardType="numeric"/>
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput mode="outlined" style={styles.input} label="Description" value={description}
-                       onChangeText={(text) => setDescription(text)}/>
-          </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
   );
 };
 
