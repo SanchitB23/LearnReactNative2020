@@ -6,3 +6,7 @@ export const CREATE_PRODUCT = 'CREATE_PRODUCT';
 export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
 export const GET_PRODUCTS = 'GET_PRODUCTS';
 export const GET_ORDERS = 'GET_ORDERS';
+export const SIGN_UP = 'SIGN_UP';
+export const LOGIN = 'LOGIN';
+export const LOGOUT = 'LOGOUT';
+export const AUTHENTICATE = 'AUTHENTICATE';

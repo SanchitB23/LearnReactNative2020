@@ -1,19 +1,18 @@
-import colors from "../constants/colors";
-import {createDrawerNavigator} from "react-navigation-drawer";
-import Products from "./ProductsNavigator";
-import Orders from "./OrdersNavigator";
-import Admin from "./AdminNavigator";
-import {createAppContainer} from "react-navigation";
+import {createAppContainer, NavigationActions} from "react-navigation";
+import AuthNavigator from "./AuthNavigator";
+import React, {useEffect, useRef} from "react";
+import {useSelector} from "react-redux";
 
+const MainNavigator = createAppContainer(AuthNavigator);
 
-const MainNavigator = createDrawerNavigator({
-  Products,
-  Orders,
-  Admin
-}, {
-  contentOptions: {
-    activeTintColor: colors.primary
-  }
-});
+export default () => {
+  const isAuth = useSelector(state => !!state.auth.token);
+  const navRef = useRef();
+  useEffect(() => {
+    if (!isAuth) {
+      navRef.current.dispatch(NavigationActions.navigate({routeName: 'Auth'}))
+    }
+  }, [isAuth]);
+  return <MainNavigator ref={navRef}/>
+}
 
-export default createAppContainer(MainNavigator)

@@ -1,11 +1,10 @@
 import React, {useCallback, useEffect, useReducer, useState} from 'react';
-import {ActivityIndicator, Alert, KeyboardAvoidingView, ScrollView, StyleSheet, View} from 'react-native';
+import {Alert, KeyboardAvoidingView, ScrollView, StyleSheet, View} from 'react-native';
 import {TextInput} from "react-native-paper";
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 import CustomHeaderButton from "../../components/layouts/CustomHeaderButton";
 import {useDispatch, useSelector} from "react-redux";
 import {createProduct, updateProduct} from "../../store/actions";
-import colors from "../../constants/colors";
 
 
 function formReducer(state, action) {
@@ -85,9 +84,9 @@ const EditProductsScreen = (props) => {
       isValid = true;
     dispatchFormState({type: 'UPDATE', value: text, isValid, input: 'title', inputIdentifier})
   };
-  if (loading) {
-    return <View style={styles.centered}><ActivityIndicator size="large" color={colors.primary}/> </View>
-  }
+  // if (loading) {
+  //   return <View style={styles.centered}><ActivityIndicator size="large" color={colors.primary}/> </View>
+  // }
 
   return (
       <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100} style={{flex: 1}}>

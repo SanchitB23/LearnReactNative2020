@@ -1,9 +1,9 @@
 import {ADD_ORDER, GET_ORDERS} from "../../constants/actionTypes";
 import Order from "../../models/order";
 
-export const addOrder = (cartItems, totalAmount) => async dispatch => {
+export const addOrder = (cartItems, totalAmount) => async (dispatch, getState) => {
   const date = new Date();
-  const response = await fetch('https://rn-shopapp-learn-march2020.firebaseio.com/orders/u1.json', {
+  const response = await fetch(`https://rn-shopapp-learn-march2020.firebaseio.com/orders/${getState().auth.userId}.json?auth=${getState().auth.token}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -19,11 +19,11 @@ export const addOrder = (cartItems, totalAmount) => async dispatch => {
   dispatch({type: ADD_ORDER, cartItems, totalAmount, id: resData.name, date})
 };
 
-export const fetchOrders = () => async dispatch => {
-  const response = await fetch('https://rn-shopapp-learn-march2020.firebaseio.com/orders/u1.json');
+export const fetchOrders = () => async (dispatch, getState) => {
+  const response = await fetch(`https://rn-shopapp-learn-march2020.firebaseio.com/orders/${getState().auth.userId}.json`);
 
   const resData = await response.json();
-  console.log("GET PRODUCTS", resData);
+  // console.log("GET PRODUCTS", resData);
   const loadedOrders = [];
   for (const key in resData) {
     if (resData.hasOwnProperty(key))

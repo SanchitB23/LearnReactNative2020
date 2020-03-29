@@ -29,7 +29,8 @@
     "expo-font": "~8.0.0",
     "react-native-paper": "^3.6.0",
     "@expo/vector-icons": "latest",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "expo-linear-gradient": "^8.1.0"
   },
   "devDependencies": {
     "babel-preset-expo": "~8.0.0",

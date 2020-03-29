@@ -8,8 +8,8 @@ export const deleteProduct = (productId) => async dispatch => {
   dispatch({type: DELETE_PRODUCT, productId})
 };
 
-export const createProduct = (title, imageURL, price, description) => async dispatch => {
-  const response = await fetch('https://rn-shopapp-learn-march2020.firebaseio.com/products.json', {
+export const createProduct = (title, imageURL, price, description) => async (dispatch, getState) => {
+  const response = await fetch(`https://rn-shopapp-learn-march2020.firebaseio.com/products.json?auth=${getState().auth.token}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -18,7 +18,8 @@ export const createProduct = (title, imageURL, price, description) => async disp
       title,
       description,
       imageURL,
-      price
+      price,
+      ownerId: getState().auth.userId
     })
   });
 
@@ -27,13 +28,14 @@ export const createProduct = (title, imageURL, price, description) => async disp
   dispatch({
     type: CREATE_PRODUCT, payload: {
       id: resData.name,
-      title, imageURL, price, description
+      title, imageURL, price, description, ownerId: getState().auth.userId
     }
   })
 };
 
-export const updateProduct = (id, title, imageURL, description) => async dispatch => {
-  await fetch(`https://rn-shopapp-learn-march2020.firebaseio.com/products/${id}.json`, {
+export const updateProduct = (id, title, imageURL, description) => async (dispatch, getState) => {
+  const {token} = getState().auth;
+  await fetch(`https://rn-shopapp-learn-march2020.firebaseio.com/products/${id}.json?auth=${token}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json'
@@ -52,18 +54,20 @@ export const updateProduct = (id, title, imageURL, description) => async dispatc
   })
 };
 
-export const fetchProducts = () => async dispatch => {
+export const fetchProducts = () => async (dispatch, getState) => {
   const response = await fetch('https://rn-shopapp-learn-march2020.firebaseio.com/products.json');
 
   const resData = await response.json();
-  console.log("GET PRODUCTS", resData);
   const loadedProducts = [];
   for (const key in resData) {
     if (resData.hasOwnProperty(key))
-      loadedProducts.push(new Product(key, 'u1', resData[key].title, resData[key].imageUrl, resData[key].description, resData[key].price))
+      loadedProducts.push(new Product(key, resData[key].ownerId, resData[key].title, resData[key].imageUrl, resData[key].description, resData[key].price))
   }
   dispatch({
     type: GET_PRODUCTS,
-    payload: loadedProducts
+    payload: {
+      loadedProducts,
+      userProducts: loadedProducts.filter(prod => prod.ownerId === getState().auth.userId)
+    }
   })
 };

@@ -1,10 +1,9 @@
-import PRODUCTS from "../../data";
 import {CREATE_PRODUCT, DELETE_PRODUCT, GET_PRODUCTS, UPDATE_PRODUCT} from "../../constants/actionTypes";
 import Product from "../../models/product";
 
 const initialState = {
-  availableProducts: PRODUCTS,
-  userProducts: PRODUCTS.filter(prod => prod.ownerId === 'u1')
+  availableProducts: [],
+  userProducts: []
 };
 
 export default (state = initialState, action) => {
@@ -16,7 +15,7 @@ export default (state = initialState, action) => {
         availableProducts: state.availableProducts.filter(product => product.id !== action.productId)
       };
     case CREATE_PRODUCT:
-      const newProd = new Product(action.payload.id, 'u1', action.payload.title, action.payload.imageURL, action.payload.description, action.payload.price);
+      const newProd = new Product(action.payload.id, action.payload.ownerId, action.payload.title, action.payload.imageURL, action.payload.description, action.payload.price);
       return {
         ...state,
         availableProducts: state.availableProducts.concat(newProd),
@@ -38,8 +37,8 @@ export default (state = initialState, action) => {
       };
     case GET_PRODUCTS:
       return {
-        availableProducts: action.payload,
-        userProducts: action.payload.filter(prod => prod.ownerId === 'u1')
+        availableProducts: action.payload.loadedProducts,
+        userProducts: action.payload.userProducts
       };
     default:
       return state
