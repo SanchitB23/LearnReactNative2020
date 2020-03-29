@@ -3,7 +3,6 @@ import {Image, Platform, StyleSheet, Text, TouchableNativeFeedback, TouchableOpa
 
 const ProductItem = (props) => {
   const {data, onSelect} = props;
-  console.log('prodItem', data.price);
   const TouchableComponent = Platform.OS === 'android' ? TouchableNativeFeedback : TouchableOpacity;
   return (
       <View style={styles.container}>

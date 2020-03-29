@@ -28,11 +28,13 @@
     "moment": "^2.24.0",
     "expo-font": "~8.0.0",
     "react-native-paper": "^3.6.0",
-    "@expo/vector-icons": "latest"
+    "@expo/vector-icons": "latest",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "babel-preset-expo": "~8.0.0",
-    "@babel/core": "^7.0.0"
+    "@babel/core": "^7.0.0",
+    "redux-devtools-extension": "^2.13.8"
   },
   "private": true
 }

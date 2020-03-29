@@ -1,10 +1,11 @@
-import React, {useCallback, useEffect, useReducer} from 'react';
-import {Alert, KeyboardAvoidingView, ScrollView, StyleSheet, View} from 'react-native';
+import React, {useCallback, useEffect, useReducer, useState} from 'react';
+import {ActivityIndicator, Alert, KeyboardAvoidingView, ScrollView, StyleSheet, View} from 'react-native';
 import {TextInput} from "react-native-paper";
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 import CustomHeaderButton from "../../components/layouts/CustomHeaderButton";
 import {useDispatch, useSelector} from "react-redux";
 import {createProduct, updateProduct} from "../../store/actions";
+import colors from "../../constants/colors";
 
 
 function formReducer(state, action) {
@@ -36,7 +37,7 @@ function formReducer(state, action) {
 
 const EditProductsScreen = (props) => {
   const prodId = props.navigation.getParam('productId');
-
+  const [loading, setLoading] = useState(false);
   const editedProduct = useSelector(state => state.products.userProducts.find(prod => prod.id === prodId));
   const dispatch = useDispatch();
 
@@ -55,17 +56,22 @@ const EditProductsScreen = (props) => {
     },
     formIsValid: !!editedProduct
   });
-  console.log(formState);
-  const submitHandler = useCallback(() => {
+
+  const submitHandler = useCallback(async () => {
     if (!formState.formIsValid) {
       Alert.alert('Wrong Input');
       return
     }
+
     const {title, description, price, imageUrl} = formState.inputValues;
+    setLoading(true);
+
     if (editedProduct) {
-      dispatch(updateProduct(prodId, title, imageUrl, description))
+      await dispatch(updateProduct(prodId, title, imageUrl, description))
     } else
-      dispatch(createProduct(title, imageUrl, +price, description));
+      await dispatch(createProduct(title, imageUrl, +price, description));
+
+    setLoading(false);
     props.navigation.goBack()
   }, [dispatch, prodId, formState]);
 
@@ -79,6 +85,9 @@ const EditProductsScreen = (props) => {
       isValid = true;
     dispatchFormState({type: 'UPDATE', value: text, isValid, input: 'title', inputIdentifier})
   };
+  if (loading) {
+    return <View style={styles.centered}><ActivityIndicator size="large" color={colors.primary}/> </View>
+  }
 
   return (
       <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100} style={{flex: 1}}>
@@ -134,6 +143,11 @@ const styles = StyleSheet.create({
   input: {
     paddingHorizontal: 2,
     marginVertical: 5,
+  },
+  centered: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 export default EditProductsScreen;
